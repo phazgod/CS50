@@ -1,0 +1,8 @@
+{
+    "files.associations": {
+        "*.ftlh": "html",
+        "cs50.h": "c",
+        "stdio.h": "c",
+        "string.h": "c"
+    }
+}

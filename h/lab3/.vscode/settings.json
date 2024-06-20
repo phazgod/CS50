@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "*.ftlh": "html",
+        "string.h": "c"
+    }
+}
