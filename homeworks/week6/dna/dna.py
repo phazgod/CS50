@@ -9,23 +9,25 @@ def main():
         sys.exit(1)
 
     # TODO: Read database file into a variable
-    with open(sys.argv[1], "r") as database_file:
+    rows = []
+    with open(sys.argv[1]) as database_file:
         reader = csv.DictReader(database_file)
-        database = [row for row in reader]
+        for row in reader:
+            rows.append(row)
     
     # TODO: Read DNA sequence file into a variable
-    with open(sys.argv[2], "r") as seqeuence_file:
+    with open(sys.argv[2]) as seqeuence_file:
         sequence = seqeuence_file.read()
 
     # TODO: Find longest match of each STR in DNA sequence
     str_counts = {}
-    for key in database[0].keys():
+    for key in rows[0].keys():
         if key == "name":
             continue
         str_counts[key] = longest_match(sequence, key)
 
     # TODO: Check database for matching profiles
-    for row in database:
+    for row in rows:
         match = True
         for key in row.keys():
             if key == "name":
