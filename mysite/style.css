@@ -1,0 +1,25 @@
+body {
+    margin-left: 15%;
+    margin-right: 15%;
+}
+header {
+    padding-top: 3%;
+    padding-bottom: 3%;
+}
+footer {
+    padding-top: 3%;
+}
+.my_text_size {
+    font-size: 20px;
+}
+main {
+    min-height: 600px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+.my_container {
+    max-width: 500px;
+    margin-left: auto;
+    margin-right: auto;
+}
