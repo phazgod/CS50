@@ -23,3 +23,22 @@ main {
     margin-left: auto;
     margin-right: auto;
 }
+.my_container_blog {
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+    padding-bottom: 5%;
+}
+.my_logo {
+    position: relative;
+    top: -2px;
+}
+.my_loading {
+    position: relative;
+    top: -7px;
+}
+.my_logos:hover {
+    background-color: #d9d9d9;
+    border-radius: 50%;
+}
