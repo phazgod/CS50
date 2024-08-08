@@ -125,10 +125,16 @@ def register():
             "SELECT * FROM users WHERE username = :username", username=request.form.get("username")
             )
         if len(rows) > 0:
-            return apology("username already exists", 403) 
-        # if request.form.get("username")
-        # db.execute("INSERT INTO finances (name, month, day) VALUES(?, ?, ?)", name, month, day)
-        # return redirect("/")
+            return apology("username already exists", 403)
+        
+        if len(rows) == 0:
+            username=request.form.get("username")
+            hash=generate_password_hash(request.form.get("password"))
+
+            rows = db.execute("INSERT INTO users (username, hash) VALUES(?, ?)", username, hash)
+            session["user_id"] = request.form.get("id")
+
+            return redirect("/")
 
     else:
         return render_template("register.html")
