@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Quote
+{% endblock %}
+
+{% block main %}
+    <div class="section d-flex justify-content-center">
+        <form action="/quote" method="post" class="row g-2">
+            <div class="col-auto">
+                <input autocomplete="off" autofocus class="form-control mx-auto w-auto" name="q" placeholder="Symbol" type="text">
+            </div>
+            <div class="col-auto">
+                <button class="btn btn-primary" type="submit">Search</button>
+            </div>
+        </form>
+    </div>
+
+    <br>
+
+    {% if symbol and price != None %}
+        <p>A share of {{ symbol }} ({{ symbol }}) costs ${{ price }}</p>
+    {% else %}
+        <p style="margin-bottom: 0px;">Write the <u>ticker symbol</u> of the company you want to find.</p>
+        <p style="margin-bottom: 0px;">For Example <b>TSLA</b> for Tesla, Inc.</p>
+        <p style="margin-bottom: 0px;">To find a list of all <u>ticker symbols</u> go to <a href="https://stockanalysis.com/stocks/">stockanalysis.com</a></p>
+    {% endif %}
+
+{% endblock %}

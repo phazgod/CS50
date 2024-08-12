@@ -35,14 +35,14 @@ def after_request(response):
 @login_required
 def index():
     """Show portfolio of stocks"""
-    return apology("TODO")
+    return render_template("index.html")
 
 
 @app.route("/buy", methods=["GET", "POST"])
 @login_required
 def buy():
     """Buy shares of stock"""
-    return apology("TODO")
+    return render_template("buy.html")
 
 
 @app.route("/history")
@@ -106,7 +106,14 @@ def logout():
 @login_required
 def quote():
     """Get stock quote."""
-    return apology("TODO")
+    if request.method == "POST":
+        q = request.form.get("q")
+        quote_data = lookup(q)
+        if lookup(q) == None:
+            return apology("invalid symbol", 400)
+        return render_template("quote.html", symbol=quote_data["symbol"], price=quote_data["price"])
+    else:
+        return render_template("quote.html")
 
 
 @app.route("/register", methods=["GET", "POST"])
