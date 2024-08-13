@@ -35,7 +35,19 @@ def after_request(response):
 @login_required
 def index():
     """Show portfolio of stocks"""
-    return render_template("index.html")
+    user_id = session["user_id"]
+    portfolio = db.execute(
+        "SELECT symbol, shares, price, total FROM stock WHERE id = ?", user_id
+        )
+    user_cash = db.execute(
+        "SELECT cash FROM users WHERE id = ?", user_id
+        )[0]["cash"]
+    total_cash = db.execute(
+        "SELECT SUM(total) + ? AS total_cash FROM stock WHERE id = ?", user_cash, user_id
+        )[0]["total_cash"]
+    return render_template("index.html",
+                           portfolio=portfolio, user_cash=user_cash, total_cash=total_cash
+    )
 
 
 @app.route("/buy", methods=["GET", "POST"])
@@ -68,8 +80,8 @@ def buy():
                 "UPDATE users SET cash = cash - ? WHERE id = ?", total_cost, user_id
                 )
             db.execute(
-                "INSERT INTO stock (id, cash, stocks) VALUES (?, ?, ?)",
-                user_id, user_cash - total_cost, f"{q}:{shares}"
+                "INSERT INTO stock (id, symbol, shares, price, total) VALUES (?, ?, ?, ?, ?)",
+                user_id, q, shares, price, total_cost
             )
             return redirect("/")
         else:
