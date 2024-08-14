@@ -17,14 +17,17 @@
             </tr>
         </thead>
         <tbody>
-                {% for symbol, stock in portfolio.items() %}
-                    <tr>
-                        <td class="text-start">{{ symbol }}</td>
-                        <td class="text-end">{{ stock.shares }}</td>
-                        <td class="text-end">{{ stock.price | usd }}</td>
-                        <td class="text-end">{{ stock.total | usd }}</td>
-                    </tr>
-                {% endfor %}
+                {% if portfolio != NULL %}
+                    {% for symbol, stock in portfolio.items() %}
+                        <tr>
+                            <td class="text-start">{{ symbol }}</td>
+                            <td class="text-end">{{ stock.shares }}</td>
+                            <td class="text-end">{{ stock.price | usd }}</td>
+                            <td class="text-end">{{ stock.total | usd }}</td>
+                        </tr>
+                    {% endfor %}
+                {% else %}
+                {% endif %}
         </tbody>
         <tfoot>
             <tr>

@@ -37,7 +37,7 @@ def index():
     """Show portfolio of stocks"""
     user_id = session["user_id"]
     portfolio = db.execute(
-        "SELECT symbol, shares, price, total FROM stock WHERE id = ?", user_id
+        "SELECT symbol, shares, price, total FROM stock WHERE id = ? ORDER BY symbol", user_id
     )
     
     aggregated_portfolio = {}
@@ -59,6 +59,8 @@ def index():
     total_cash = db.execute(
         "SELECT SUM(total) + ? AS total_cash FROM stock WHERE id = ?", user_cash, user_id
     )[0]["total_cash"]
+    if total_cash is None:
+        total_cash = user_cash
     
     return render_template("index.html",
                            portfolio=aggregated_portfolio, user_cash=user_cash, total_cash=total_cash
@@ -98,6 +100,10 @@ def buy():
                 "INSERT INTO stock (id, symbol, shares, price, total) VALUES (?, ?, ?, ?, ?)",
                 user_id, q, shares, price, total_cost
             )
+            db.execute(
+                "INSERT INTO transactions (user_id, symbol, shares, price) VALUES (?, ?, ?, ?)",
+                user_id, q, shares, price
+            )
             return redirect("/")
         else:
             return apology("Not enough money", 403)
@@ -105,11 +111,7 @@ def buy():
         return render_template("buy.html")
 
 
-@app.route("/history")
-@login_required
-def history():
-    """Show history of transactions"""
-    return apology("TODO")
+
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -218,6 +220,7 @@ def sell():
         shares = db.execute(
             "SELECT shares FROM stock WHERE id = ? AND symbol = ?", user_id, symbol
         )[0]["shares"]
+
         if input_shares > shares:
             return apology("too many shares", 400)
         else:
@@ -225,7 +228,7 @@ def sell():
                 "SELECT price FROM stock WHERE id = ? AND symbol = ?", user_id, symbol
             )[0]["price"]
             sale_amount = price * input_shares
-            
+
             db.execute(
                 "UPDATE stock SET shares = shares - ? WHERE id = ? AND symbol = ?", input_shares, user_id, symbol
             )
@@ -235,9 +238,22 @@ def sell():
             db.execute(
                 "UPDATE users SET cash = cash + ? WHERE id = ?", sale_amount, user_id
             )
+            db.execute(
+                "INSERT INTO transactions (user_id, symbol, shares, price) VALUES (?, ?, ?, ?)", user_id, symbol, -input_shares, price
+            )
             return redirect("/")
     else:
         symbols = db.execute(
             "SELECT DISTINCT symbol FROM stock WHERE id = ?", user_id
         )
         return render_template("sell.html", symbols=symbols)
+
+@app.route("/history")
+@login_required
+def history():
+    """Show history of transactions"""
+    user_id = session["user_id"]
+    transaction = db.execute(
+        "SELECT symbol, shares, price, transacted FROM transactions WHERE user_id = ? ORDER BY transacted DESC", user_id
+    )
+    return render_template("history.html", transaction=transaction)
