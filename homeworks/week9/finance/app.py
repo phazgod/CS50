@@ -39,18 +39,6 @@ def index():
     portfolio = db.execute(
         "SELECT symbol, shares, price, total FROM stock WHERE id = ? ORDER BY symbol", user_id
     )
-    
-    aggregated_portfolio = {}
-    for stock in portfolio:
-        symbol = stock['symbol']
-        if symbol not in aggregated_portfolio:
-            aggregated_portfolio[symbol] = {
-                'shares': 0,
-                'price': stock['price'],
-                'total': 0
-            }
-        aggregated_portfolio[symbol]['shares'] += stock['shares']
-        aggregated_portfolio[symbol]['total'] += stock['total']
 
     user_cash = db.execute(
         "SELECT cash FROM users WHERE id = ?", user_id
@@ -61,9 +49,9 @@ def index():
     )[0]["total_cash"]
     if total_cash is None:
         total_cash = user_cash
-    
+
     return render_template("index.html",
-                           portfolio=aggregated_portfolio, user_cash=user_cash, total_cash=total_cash
+                           portfolio=portfolio, user_cash=user_cash, total_cash=total_cash
     )
 
 
@@ -79,7 +67,7 @@ def buy():
         
         q = request.form.get("q")
         quote_data = lookup(q)
-        if lookup(q) == None:
+        if quote_data == None:
             return apology("invalid symbol", 400)
         
         price = quote_data["price"]
@@ -96,17 +84,30 @@ def buy():
             db.execute(
                 "UPDATE users SET cash = cash - ? WHERE id = ?", total_cost, user_id
             )
-            db.execute(
-                "INSERT INTO stock (id, symbol, shares, price, total) VALUES (?, ?, ?, ?, ?)",
-                user_id, q, shares, price, total_cost
+
+            existing_stock = db.execute(
+                "SELECT shares FROM stock WHERE id = ? AND symbol = ?", user_id, q
             )
+            if existing_stock:
+                db.execute(
+                    "UPDATE stock SET shares = shares + ?, total = total + ? WHERE id = ? AND symbol = ?",
+                    shares, total_cost, user_id, q
+                )
+            else:
+                db.execute(
+                    "INSERT INTO stock (id, symbol, shares, price, total) VALUES (?, ?, ?, ?, ?)",
+                    user_id, q, shares, price, total_cost
+                )
+
             db.execute(
                 "INSERT INTO transactions (user_id, symbol, shares, price) VALUES (?, ?, ?, ?)",
                 user_id, q, shares, price
             )
+            flash("Bought!", "message")
             return redirect("/")
         else:
             return apology("Not enough money", 403)
+
     else:
         return render_template("buy.html")
 
@@ -241,6 +242,7 @@ def sell():
             db.execute(
                 "INSERT INTO transactions (user_id, symbol, shares, price) VALUES (?, ?, ?, ?)", user_id, symbol, -input_shares, price
             )
+            flash("Sold!", "message")
             return redirect("/")
     else:
         symbols = db.execute(
@@ -257,3 +259,18 @@ def history():
         "SELECT symbol, shares, price, transacted FROM transactions WHERE user_id = ? ORDER BY transacted DESC", user_id
     )
     return render_template("history.html", transaction=transaction)
+
+@app.route("/topup", methods=["GET", "POST"])
+@login_required
+def topup():
+    """Buy shares of stock"""
+    if request.method == "POST":
+        user_id = session["user_id"]
+        amount = request.form.get("amount")
+        db.execute(
+            "UPDATE users SET cash = cash + ? WHERE id = ?", amount, user_id
+        )
+        flash(f"Top-up! +{amount}$", "message")
+        return redirect("/")
+    else:
+        return render_template("topup.html")

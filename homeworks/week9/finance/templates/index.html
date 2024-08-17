@@ -18,9 +18,9 @@
         </thead>
         <tbody>
                 {% if portfolio != NULL %}
-                    {% for symbol, stock in portfolio.items() %}
+                    {% for stock in portfolio %}
                         <tr>
-                            <td class="text-start">{{ symbol }}</td>
+                            <td class="text-start">{{ stock.symbol }}</td>
                             <td class="text-end">{{ stock.shares }}</td>
                             <td class="text-end">{{ stock.price | usd }}</td>
                             <td class="text-end">{{ stock.total | usd }}</td>

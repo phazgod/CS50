@@ -21,9 +21,47 @@
     {% if symbol and price != None %}
         <p>A share of {{ symbol }} ({{ symbol }}) costs ${{ price }}</p>
     {% else %}
-        <p style="margin-bottom: 0px;">Write the <u>ticker symbol</u> of the company you want to find.</p>
-        <p style="margin-bottom: 0px;">For Example <b>TSLA</b> for Tesla, Inc.</p>
-        <p style="margin-bottom: 0px;">To find a list of all <u>ticker symbols</u> go to <a href="https://stockanalysis.com/stocks/" target="_blank">stockanalysis.com</a></p>
+        <p style="margin-bottom: 0px;">Write the <u>ticker symbol</u> of the company you want to find. For Example <b>TSLA</b> for Tesla, Inc.</p>
+        <p>To find a list of all <u>ticker symbols</u> go to <a href="https://stockanalysis.com/trending/" target="_blank">stockanalysis.com</a></p>
+            <div class="section">
+                <h4>Tranding</h4>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th class="text-start">No.</th>
+                            <th class="text-end">Symbol</th>
+                            <th class="text-end">Company Name</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="text-start">1</td>
+                            <td class="text-end">NVDA</td>
+                            <td class="text-end">NVIDIA Corporation</td>
+                        </tr>
+                        <tr>
+                            <td class="text-start">2</td>
+                            <td class="text-end">CING</td>
+                            <td class="text-end">Cingulate Inc.</td>
+                        </tr>
+                        <tr>
+                            <td class="text-start">3</td>
+                            <td class="text-end">AMZN</td>
+                            <td class="text-end">Amazon.com, Inc.</td>
+                        </tr>
+                        <tr>
+                            <td class="text-start">4</td>
+                            <td class="text-end">AAPL</td>
+                            <td class="text-end">Apple Inc.</td>
+                        </tr>
+                        <tr>
+                            <td class="text-start">5</td>
+                            <td class="text-end">TSLA</td>
+                            <td class="text-end">Tesla, Inc.</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
     {% endif %}
 
 {% endblock %}
