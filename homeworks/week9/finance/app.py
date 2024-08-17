@@ -65,7 +65,7 @@ def buy():
         elif not request.form.get("shares"):
             return apology("missing shares", 403)
         
-        q = request.form.get("q")
+        q = request.form.get("q").upper()
         quote_data = lookup(q)
         if quote_data == None:
             return apology("invalid symbol", 400)
